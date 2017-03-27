@@ -18,7 +18,7 @@
     </div> 
     <div class="form-group">
       <label for="profile">Profile photo</label>
-      <input type="file">
+      <input type="fileList" onchange="readFiles(event)">
     </div>
     <button type="submit" class="btn btn-default">Upload</button>
   </form>
@@ -44,6 +44,40 @@
   firebase.initializeApp(config);
    // Get a reference to the storage service, which is used to create references in your storage bucket
   var storage = firebase.storage();
+  // Points to the root reference
+var storageRef = firebase.storage().ref();
+
+// Points to 'images'
+var imagesRef = storageRef.child('images');
+
+// Points to 'images/profile.jpg'
+// Note that you can use variables to create child values
+var fileName = 'profile.jpg';
+var spaceRef = imagesRef.child(fileName);
+
+// File path is 'images/space.jpg'
+var path = spaceRef.fullPath
+
+// File name is 'space.jpg'
+var name = spaceRef.name
+
+// Points to 'images'
+var imagesRef = spaceRef.parent;
+
+function readFiles(event) {
+    var fileList = event.target.files;
+  }
+    var uploadTask = storageRef.child('images/' + fileList.name).put(fileList);
+    // Listen for state changes, errors, and completion of the upload.
+uploadTask.on(firebase.storage.TaskEvent.state_changed,function(snapshot) {
+  },  function() {
+  // Upload completed successfully, now we can get the download URL
+  var downloadURL = uploadTask.snapshot.downloadURL;
+  console.log(downloadURL); 
+
+});
+
+
 </script>
 </body>
 </html>
