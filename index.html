@@ -6,19 +6,44 @@
 <body>
 
 <div class="container">
-  <h2>Upload image to your drive</h2>
+  <h2>Profile</h2>
   <form>
     <div class="form-group">
+     <label for="name">Name</label>
+     <input  type="name" class="form-control" id="name">
+    </div> 
+    <div class="form-group">
+     <label for="username">username</label>
+     <input  type="username" class="form-control" id="username">
+    </div> 
+    <div class="form-group">
+      <label for="profile">Profile photo</label>
       <input type="file">
     </div>
     <button type="submit" class="btn btn-default">Upload</button>
   </form>
+  <button onclick="window.location.href='./profile.html'" class="btn btn-default">Show Profile</button>
 </div>
 
 <!-- bootstrap support files -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--adding firebase support -->
 
+<script src="https://www.gstatic.com/firebasejs/3.7.3/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCH-0GLL2D0glqgJUpEs64J52DlEkIM70Y",
+    authDomain: "profile-6eb1e.firebaseapp.com",
+    databaseURL: "https://profile-6eb1e.firebaseio.com",
+    storageBucket: "profile-6eb1e.appspot.com",
+    messagingSenderId: "587990979178"
+  };
+  firebase.initializeApp(config);
+   // Get a reference to the storage service, which is used to create references in your storage bucket
+  var storage = firebase.storage();
+</script>
 </body>
 </html>
