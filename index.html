@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8" />
 	<title>drive api</title>
 </head>
 <body>
@@ -18,9 +19,9 @@
     </div> 
     <div class="form-group">
       <label for="profile">Profile photo</label>
-      <input type="fileList" onchange="readFiles(event)">
+      <input type="file" id="file">
     </div>
-    <button type="submit" class="btn btn-default">Upload</button>
+    <button type="submit" class="btn btn-default" onclick="uploadFile()">Upload</button>
   </form>
   <button onclick="window.location.href='./profile.html'" class="btn btn-default">Show Profile</button>
 </div>
@@ -29,6 +30,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 <!--adding firebase support -->
 
 <script src="https://www.gstatic.com/firebasejs/3.7.3/firebase.js"></script>
@@ -42,42 +44,45 @@
     messagingSenderId: "587990979178"
   };
   firebase.initializeApp(config);
-   // Get a reference to the storage service, which is used to create references in your storage bucket
-  var storage = firebase.storage();
-  // Points to the root reference
-var storageRef = firebase.storage().ref();
-
-// Points to 'images'
-var imagesRef = storageRef.child('images');
-
-// Points to 'images/profile.jpg'
-// Note that you can use variables to create child values
-var fileName = 'profile.jpg';
-var spaceRef = imagesRef.child(fileName);
-
-// File path is 'images/space.jpg'
-var path = spaceRef.fullPath
-
-// File name is 'space.jpg'
-var name = spaceRef.name
-
-// Points to 'images'
-var imagesRef = spaceRef.parent;
-
-function readFiles(event) {
-    var fileList = event.target.files;
-  }
-    var uploadTask = storageRef.child('images/' + fileList.name).put(fileList);
-    // Listen for state changes, errors, and completion of the upload.
-uploadTask.on(firebase.storage.TaskEvent.state_changed,function(snapshot) {
-  },  function() {
-  // Upload completed successfully, now we can get the download URL
-  var downloadURL = uploadTask.snapshot.downloadURL;
-  console.log(downloadURL); 
-
+  //Store the selected file in fileList
+  var selectedFile;
+  var $ = jQuery;
+$("#file").on("change",function(event) {
+  selectedFile = event.target.files[0];
 });
+// Get a reference to the storage service, which is used to create references in your storage bucket
+  var storage = firebase.storage();
 
-
+ function uploadFile() {
+  var fileName = selectedFile.name; 
+  var storageRef = firebase.storage().ref('/profileImages/' + fileName);  
+  var uploadTask = storageRef.put(selectedFile);
+  // Register three observers:
+// 1. 'state_changed' observer, called any time the state changes
+// 2. Error observer, called on failure
+// 3. Completion observer, called on successful completion
+uploadTask.on('state_changed', function(snapshot){
+  // Observe state change events such as progress, pause, and resume
+  // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+  var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  console.log('Upload is ' + progress + '% done');
+  switch (snapshot.state) {
+    case firebase.storage.TaskState.PAUSED: // or 'paused'
+      console.log('Upload is paused');
+      break;
+    case firebase.storage.TaskState.RUNNING: // or 'running'
+      console.log('Upload is running');
+      break;
+  }
+}, function(error) {
+  // Handle unsuccessful uploads
+}, function() {
+  // Handle successful uploads on complete
+  // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+  var downloadURL = uploadTask.snapshot.downloadURL;
+});
+ }
 </script>
+
 </body>
 </html>
